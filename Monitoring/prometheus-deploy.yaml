@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: prometheus-deployment
+    namespace: monitoring
+    labels:
+        app: prometheus
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: prometheus
+    template:
+        metadata:
+            labels:
+                app: prometheus
+        spec:
+            serviceAccountName: monitoring
+            containers:
+                - name: prometheus
+                  image: prom/prometheus:v2.50.0
+                  args:
+                      - '--storage.tsdb.path=/prometheus'
+                      - '--storage.tsdb.retention.time=15d'
+                      - '--config.file=/etc/prometheus/prometheus.yaml'
+                      - '--web.enable-admin-api'
+                  ports:
+                      - containerPort: 9090
+                  volumeMounts:
+                      - name: prometheus-server-config
+                        mountPath: /etc/prometheus
+                      - name: prometheus-rules
+                        mountPath: /etc/prometheus-rules
+            volumes:
+                - name: prometheus-server-config
+                  configMap:
+                      name: prometheus-server-config
+                - name: prometheus-rules
+                  configMap:
+                      name: prometheus-rules

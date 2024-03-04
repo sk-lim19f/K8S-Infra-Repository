@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: ingress-root-health
+    namespace: ingress
+    annotations:
+        nginx.ingress.kubernetes.io/upstream-healthcheck-path: '/health'
+        nginx.ingress.kubernetes.io/upstream-healthcheck-port: '80'
+spec:
+    ingressClassName: nginx
+    rules:
+        - http:
+              paths:
+                  - path: /
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: api-server-external
+                            port:
+                                number: 80
+                  - path: /health
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: api-server-external
+                            port:
+                                number: 80

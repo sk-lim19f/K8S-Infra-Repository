@@ -1,0 +1,15 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+    namespace: ingress
+    name: ingress-role
+rules:
+    - apiGroups: ['']
+      resources:
+          - configmaps
+          - endpoints
+          - secrets
+          - services
+          - pods
+          - nodes
+      verbs: ['update', 'get', 'list', 'watch', 'create']

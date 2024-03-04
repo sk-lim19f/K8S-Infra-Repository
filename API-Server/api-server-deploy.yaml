@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: api-server-deployment
+    labels:
+        app: api-server
+    namespace: api
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            app: api-server
+    template:
+        metadata:
+            labels:
+                app: api-server
+        spec:
+            containers:
+                - name: api-server
+                  image: limsangkyu/api-server
+                  ports:
+                      - containerPort: 80
+                  readinessProbe:
+                      httpGet:
+                          path: /health
+                          port: 80
+                      initialDelaySeconds: 5
+                      periodSeconds: 10
